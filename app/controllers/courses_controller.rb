@@ -4,6 +4,11 @@ class CoursesController < ApplicationController
 
 	def index
     @courses = Course.all
+    @courses_ta = Hash.new 
+    @courses.each do |course|
+      tadata = Student.where(:course_assigned => course.id)
+      @courses_ta[course.id] = tadata
+    end
   end
 
   #  /courses/new
@@ -53,5 +58,61 @@ class CoursesController < ApplicationController
       format.html {redirect_to courses_url, notice: "Course #{@course.name} was successfully destroyed"}
       format.json {head :no_content}
     end
+  end
+
+  def select_new_ta
+    @course = Course.find(params[:id])
+    @students = Student.where(status: Student::UNDER_REVIEW)
+  end
+
+  def assign_new_ta
+    id = params[:id]
+    @course = Course.find(id)
+    if params[:ids]
+      new_tas = params[:ids].keys
+      if not new_tas.empty?
+        new_tas.each do |ta_id|
+          @student = Student.find(ta_id)
+          @student.course_assigned = @course.id
+          @student.status = Student::TEMP_ASSIGNED
+          @student.save!
+        end
+      end
+    end
+    flash[:notice] = "New TA assigned for #{@course.name}"
+    redirect_to courses_path
+  end
+
+  # Email  
+  def email_ta_notification
+    @student = Student.find(params[:ta_id])
+    @student.status = Student::EMAIL_NOTIFIED
+    @student.save!
+    @user = User.find_by(:uin => @student.uin)
+    ## Sent mail to @user
+    UserNotifier.send_ta_notification(@user).deliver
+    flash[:notice] = "A Notification Email has been sent to #{@student.fullName()}: #{@user.email}"
+    redirect_to courses_path
+  end
+
+  # Confirm courses/confirm_ta/:id/:ta_id
+  def confirm_ta
+    @student = Student.find(params[:ta_id])
+    @student.status = Student::ASSIGNED
+    @student.save!
+    flash[:notice] = "TA #{@student.fullName()} is confirmd!"
+    redirect_to courses_path
+  end
+
+  # Delete courses/delete_ta
+  def delete_ta
+    @course = Course.find(params[:id])
+    @student = Student.find(params[:ta_id])
+    @student.status = Student::UNDER_REVIEW
+    @student.course_assigned = 0
+    @student.save!
+
+    flash[:notice] = "TA #{@student.fullName()} is deleted for #{@course.name}"
+    redirect_to courses_path
   end
 end

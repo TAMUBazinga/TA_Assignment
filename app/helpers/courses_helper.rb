@@ -12,7 +12,7 @@ module CoursesHelper
       to_be_returned_hash[course_id][:slots] = ta_hash.size()
       ta_hash.each_pair do |ta_id, single_ta_status_hash|
         # byebug
-        if (single_ta_status_hash["status"] == 3 || single_ta_status_hash["status"] == 5 )
+        if (single_ta_status_hash["status"] == 4 || single_ta_status_hash["status"] == 6 )
           to_be_returned_hash[course_id][:assigned] = to_be_returned_hash[course_id][:assigned]  + 1
         end
       end

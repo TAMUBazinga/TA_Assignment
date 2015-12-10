@@ -13,8 +13,9 @@ function courseIndexRelevant (){
     var jq_stats = jq_heading.find(".confirm-designated");
     jq_stats.data("confirmed", Number(jq_stats.data("confirmed")));
     jq_stats.data("designated", Number(jq_stats.data("designated")));
+    console.log("before adding:"+jq_stats.data("confirmed"));
     jq_stats.data("confirmed", jq_stats.data("confirmed") + confirmed_change);
-
+    console.log("after adding:"+jq_stats.data("confirmed"));
     if ( jq_stats.data("confirmed") > jq_stats.data("designated")){
       jq_stats.data("confirmed", jq_stats.data("designated"));
     }

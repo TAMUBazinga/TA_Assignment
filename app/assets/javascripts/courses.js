@@ -8,7 +8,7 @@ function courseIndexRelevant (){
 
 
   console.log(".courses.index on page change ");
-  // jq_heading should be jquery object of course heading
+  // jq_heading should be jquery object of corresponding course heading
   function updateConfirmed( jq_heading, confirmed_change){
     var jq_stats = jq_heading.find(".confirm-designated");
     jq_stats.data("confirmed", Number(jq_stats.data("confirmed")));

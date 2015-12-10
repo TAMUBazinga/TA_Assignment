@@ -5,7 +5,21 @@
 
 // following code is to prevent course row from expanding when user clicked edit button of each course row at courses index 
 function courseIndexRelevant (){
+
+
   console.log(".courses.index on page change ");
+  // jq_heading should be jquery object of course heading
+  function updateConfirmed( jq_heading, confirmed_change){
+    var jq_stats = jq_heading.find(".confirm-designated");
+    jq_stats.data("confirmed", Number(jq_stats.data("confirmed")));
+    jq_stats.data("designated", Number(jq_stats.data("designated")));
+    jq_stats.data("confirmed", jq_stats.data("confirmed") + confirmed_change);
+
+    if ( jq_stats.data("confirmed") > jq_stats.data("designated")){
+      jq_stats.data("confirmed", jq_stats.data("designated"));
+    }
+    jq_stats.html(jq_stats.data("confirmed") + " / " + jq_stats.data("designated"));
+  }
 
   function tagJqueryClickCb ( event, tag){
     var $tag = this;
@@ -47,6 +61,8 @@ function courseIndexRelevant (){
   // otherwise, if use click back to courses, the accordian cannot be expanded, due to bootstrap event manager will
   // wrongly believe that the accordian has already been expanded.
 
+
+
   $('a.add-new-ta').click(function(event){
     var atag = this;
     event.preventDefault();
@@ -68,7 +84,9 @@ function courseIndexRelevant (){
       success:function (data){
         if ($(atag).hasClass("confirm-link")){
           var $this_li = $( $(atag).attr("data-target") );
-          $this_li.find(".label").removeClass().addClass("label label-success").html("Assigned");;
+          $this_li.find(".label").removeClass().addClass("label label-success").html("Assigned");
+          var jq_heading = $($(atag).data("course-heading-id"));
+          updateConfirmed(jq_heading, 1);
           return;
         }
         window.location.reload();
@@ -87,6 +105,7 @@ function courseIndexRelevant (){
     $("#email-form").attr("action", $this.attr("href"));
     $("#email-body").find("textarea[name=email_body_user_input]").val(student_full_name + ":\n  you have been assigned TA for course:\n\n" + $this.data("course-str"));
     $("#email-body").find("input[name=student_application_id]").val($this.data("student_application_id"));
+    $("#email-form").data("course-heading-id", $this.data("course-heading-id"));
     $("#email-shared-editor-modal").modal("show");
   });
 
@@ -105,6 +124,7 @@ function courseIndexRelevant (){
             $($form.attr("data-target")).find(".label").removeClass().addClass("label label-primary").html("Email Notified");
             $("#email-shared-editor-modal").modal("hide");
             $form.find("button[type=submit]").html("send");
+            // var jq_heading = $($("#email-form").data("course-heading-id"));
           }
         },
         error: function (jqXHR, textStatus, errorThrown){

@@ -59,7 +59,7 @@
               .col-xs-1.td=ApplicationPool::getAppPoolYearSemester(course.application_pool_id)
               .col-xs-1.td=course.cid
               .col-xs-4.td=course.name
-              .col-xs-2.td="#{@SlotStatus[course.id][:assigned] } / #{@SlotStatus[course.id][:slots] }"
+              .col-xs-2.td.confirm-designated{"data-confirmed" =>"#{@SlotStatus[course.id][:assigned] }", "data-designated" => "#{@SlotStatus[course.id][:slots] }" }="#{@SlotStatus[course.id][:assigned] } / #{@SlotStatus[course.id][:slots] }"
               .col-xs-3.td=course.lecturer
               .col-xs-1.td
                 %a.btn.btn-default.btn-sm.edit-op-btn{:href=> edit_course_path(course.id) ,"data-toggle" =>"tooltip", "data-placement" => "bottom", "data-title" => "Edit", id:"edit-#{course.id}"}
@@ -101,7 +101,7 @@
                                   %span{class:"label label-success"}="Assigned"
                                 - else
                                   %span{class:"label label-danger"}="Unknown"
-                            .col-xs-5=link_to('Email', email_ta_notification_path(:id => course.id), {:class=>"email-link", "data-target"=>"#tali-#{course.id}-#{ta.id}", "data-student_application_id"=> ta.id, "data-course-str" => course.cid + " " + course.name}) +' / ' + link_to('Confirm', confirm_ta_path(:id => course.id, :ta_id => ta.id),{:class=>"confirm-link","data-target"=> "#tali-#{course.id}-#{ta.id}"}) +' / ' +link_to('Delete', delete_ta_path(:id => course.id, :ta_id => ta.id), {:class => "delete-link", "data-target"=> "#tali-#{course.id}-#{ta.id}"})
+                            .col-xs-5=link_to('Email', email_ta_notification_path(:id => course.id), {:class=>"email-link", "data-target"=>"#tali-#{course.id}-#{ta.id}", "data-student_application_id"=> ta.id, "data-course-str" => course.cid + " " + course.name, "data-course-heading-id" => "#heading#{course.id}" }) +' / ' + link_to('Confirm', confirm_ta_path(:id => course.id, :ta_id => ta.id),{:class=>"confirm-link","data-target"=> "#tali-#{course.id}-#{ta.id}", "data-course-heading-id" => "#heading#{course.id}"}) +' / ' +link_to('Delete', delete_ta_path(:id => course.id, :ta_id => ta.id), {:class => "delete-link", "data-target"=> "#tali-#{course.id}-#{ta.id}","data-course-heading-id" => "#heading#{course.id}"})
                   - else
                     %p No TA assigned yet for this course
                   - if @courses_suggestion.has_key?(course.id)
